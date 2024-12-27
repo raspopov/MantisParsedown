@@ -83,9 +83,9 @@ $( function() {
 	}
 
 	// Install snippet for next elements:
-	for( var element of [ 'description', 'steps_to_reproduce', 'additional_info', 'bugnote_text' ] ) {
+	for( var element of [ 'description', 'steps_to_reproduce', 'additional_info', 'additional_information', 'bugnote_text', 'project-description' ] ) {
 		var textarea = document.getElementById( element );
-		if( textarea ) {
+		if( textarea && textarea.nodeName === 'TEXTAREA' ) {
 			var view_id = element + '_view';
 			var view = document.getElementById( view_id );
 			if( !view ) {
