@@ -1,0 +1,22 @@
+.parsedown-button {
+	border: 1px solid #5090C1;
+	border-radius: 0.5em;
+	margin-left: 0.2em;
+	margin-bottom: 0.4em;
+}
+.parsedown-button.active {
+	background-color: #f3faff;
+}
+.parsedown-button.passive {
+	background-color: #ffffff;
+}
+.parsedown-button.tool {
+	background-color: #ffffff;
+	float: right;
+}
+.parsedown-view {
+	box-sizing: content-box !important;
+	height: auto;
+	width: auto;
+	display: none;
+}

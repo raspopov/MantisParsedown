@@ -1,0 +1,4 @@
+<?php
+
+$s_plugin_MantisParsedown_title = 'Mantis Parsedown';
+$s_plugin_MantisParsedown_description = 'A plugin for a native markup preview of the input fields.';
