@@ -24,3 +24,7 @@ The plugin adds a button bar above each input field that supports MantisBT [Pars
 ## Configuration
 
 - None
+
+## Similar plugins
+
+- [MarkDownEditor](https://github.com/ejyothi/MantisBT-MarkDownEditor) by eJyothi Services
