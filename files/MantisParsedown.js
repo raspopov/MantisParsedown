@@ -23,8 +23,10 @@ $( function() {
 	if( !window.XMLHttpRequest ) {
 		return;
 	}
+	
+	const elements = [ 'description', 'steps_to_reproduce', 'additional_info', 'additional_information', 'bugnote_text', 'project-description' ];
 
-	var buttons = [
+	const buttons = [
 		[
 			'edit',
 			'',
@@ -38,6 +40,14 @@ $( function() {
 			'Preview',
 			'<svg width="24" height="24" viewBox="0 -4 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M 0,2 C 0,2 0,0 2,0 h 12 c 0,0 2,0 2,2 v 6 c 0,0 0,2 -2,2 h -4 c 0,0.667 0.083,1.167 0.25,1.5 H 11 a 0.5,0.5 0 0 1 0,1 H 5 a 0.5,0.5 0 0 1 0,-1 H 5.75 C 5.917,11.167 6,10.667 6,10 H 2 C 2,10 0,10 0,8 Z M 1.398,1.145 A 0.758,0.758 0 0 0 1.144,1.447 1.46,1.46 0 0 0 1,2.01 V 8 c 0,0.325 0.078,0.502 0.145,0.602 0.07,0.105 0.17,0.188 0.302,0.254 A 1.464,1.464 0 0 0 1.985,8.999 L 2.01,9 H 14 c 0.325,0 0.502,-0.078 0.602,-0.145 A 0.758,0.758 0 0 0 14.856,8.553 1.464,1.464 0 0 0 14.999,8.015 L 15,7.99 V 2 C 15,1.675 14.922,1.498 14.855,1.398 A 0.757,0.757 0 0 0 14.553,1.144 1.46,1.46 0 0 0 13.99,1 H 2 C 1.675,1 1.498,1.078 1.398,1.145 Z" id="path1" /></svg>',
 			function() { preview( this.id ); }
+		],
+		// In reverse order due "float: right" style
+		[
+			'l',
+			'tool',
+			'Link',
+			'<svg width="24" height="24" viewBox="0 -1 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"/></svg>',
+			function() { combine( this.id, '[', '](url)', 2, 3 ); }
 		],
 		[
 			'c',
@@ -87,16 +97,16 @@ $( function() {
 	function edit(id) {
 		var element = id.substr( 0, id.lastIndexOf( '_' ) );
 		document.getElementById( element + '_view' ).style.display = 'none';
-		document.getElementById( element + '_edit' ).className = 'parsedown-button active';
-		document.getElementById( element + '_preview' ).className = 'parsedown-button passive';
+		document.getElementById( element + '_' + buttons[0][0] ).className = 'parsedown-button active';
+		document.getElementById( element + '_' + buttons[1][0] ).className = 'parsedown-button passive';
 		tools( element, 'block' );
 		document.getElementById( element ).style.display = 'block';
 	}
 
 	function preview(id) {
 		var element = id.substr( 0, id.lastIndexOf( '_' ) );
-		document.getElementById( element + '_edit' ).className = 'parsedown-button passive';
-		document.getElementById( element + '_preview' ).className = 'parsedown-button active';
+		document.getElementById( element + '_' + buttons[0][0] ).className = 'parsedown-button passive';
+		document.getElementById( element + '_' + buttons[1][0] ).className = 'parsedown-button active';
 		tools( element, 'none' );
 
 		var textarea = document.getElementById( element );
@@ -126,7 +136,7 @@ $( function() {
 		xhr.send( data );
 	}
 
-	function combine(id, before, after) {
+	function combine(id, before, after, sel_start, sel_length) {
 		var textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
 		textarea.focus();
 		var start = textarea.selectionStart;
@@ -139,10 +149,14 @@ $( function() {
 		textarea.value = head + before + middle + after + tail;
 		textarea.selectionStart = start + before.length;
 		textarea.selectionEnd = end + before.length;
+		if( sel_start !== undefined && sel_length !== undefined ) {
+			textarea.selectionStart += middle.length + sel_start;
+			textarea.selectionEnd = textarea.selectionStart + sel_length;
+		}
 	}
 
 	// Install snippet for next elements:
-	for( var element of [ 'description', 'steps_to_reproduce', 'additional_info', 'additional_information', 'bugnote_text', 'project-description' ] ) {
+	for( var element of elements ) {
 		var id = element + '_';
 		var textarea = document.getElementById( element );
 		if( textarea && textarea.nodeName === 'TEXTAREA' ) {
@@ -153,15 +167,16 @@ $( function() {
 				view.id = view_id;
 				view.className = 'form-control parsedown-view';
 				var btns = textarea.insertAdjacentElement( 'beforeBegin', document.createElement( 'div' ) );
+				btns.className = 'parsedown-bar';
 				for( var button of buttons ) {
-					var bt = btns.appendChild( document.createElement( 'button' ) );
+					var bt = btns.insertAdjacentElement( 'beforeEnd', document.createElement( 'button' ) );
 					bt.id = id + button[0];
 					bt.type = 'button';
 					if( button[1] ) {
 						bt.className = 'parsedown-button ' + button[1];
 					}
 					bt.title = button[2];
-					bt.innerHTML = button[3];;
+					bt.innerHTML = button[3];
 					bt.onclick = button[4];
 				}
 				edit( id );
