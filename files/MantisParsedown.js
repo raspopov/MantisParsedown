@@ -23,7 +23,7 @@
 	if( !window.XMLHttpRequest ) {
 		return;
 	}
-	
+
 	const elements = [ 'description', 'steps_to_reproduce', 'additional_info', 'additional_information', 'bugnote_text', 'project-description' ];
 
 	const buttons = [
@@ -43,11 +43,18 @@
 		],
 		// In reverse order due "float: right" style
 		[
+			'u',
+			'tool',
+			'Unordered list',
+			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>',
+			function() { combine( this.id, '- ', '\n', '\n' ); }
+		],
+		[
 			'l',
 			'tool',
 			'Link',
 			'<svg width="24" height="24" viewBox="0 -1 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"/></svg>',
-			function() { combine( this.id, '[', '](url)', 2, 3 ); }
+			function() { combine( this.id, '[', '](url)', undefined, 2, 3 ); }
 		],
 		[
 			'c',
@@ -82,12 +89,12 @@
 			'tool',
 			'Heading',
 			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 2a.75.75 0 0 1 .75.75V7h7V2.75a.75.75 0 0 1 1.5 0v10.5a.75.75 0 0 1-1.5 0V8.5h-7v4.75a.75.75 0 0 1-1.5 0V2.75A.75.75 0 0 1 3.75 2Z"/></svg>',
-			function() { combine( this.id, '\n### ', '\n\n' ); }
+			function() { combine( this.id, '\n### ', '\n', '\n' ); }
 		]
 	];
 	
 	function tools(element,display) {
-		for( var button of buttons ) {
+		for( const button of buttons ) {
 			if( button[1] === 'tool' ) {
 				document.getElementById( element + '_' + button[0] ).style.display = display;
 			}
@@ -95,7 +102,7 @@
 	}
 
 	function edit(id) {
-		var element = id.substr( 0, id.lastIndexOf( '_' ) );
+		const element = id.substr( 0, id.lastIndexOf( '_' ) );
 		document.getElementById( element + '_view' ).style.display = 'none';
 		document.getElementById( element + '_' + buttons[0][0] ).className = 'parsedown-button active';
 		document.getElementById( element + '_' + buttons[1][0] ).className = 'parsedown-button passive';
@@ -104,7 +111,7 @@
 	}
 
 	function preview(id) {
-		var element = id.substr( 0, id.lastIndexOf( '_' ) );
+		const element = id.substr( 0, id.lastIndexOf( '_' ) );
 		document.getElementById( element + '_' + buttons[0][0] ).className = 'parsedown-button passive';
 		document.getElementById( element + '_' + buttons[1][0] ).className = 'parsedown-button active';
 		tools( element, 'none' );
@@ -136,28 +143,40 @@
 		xhr.send( data );
 	}
 
-	function combine(id, before, after, sel_start, sel_length) {
+	function combine(id, before, after, split, sel_start, sel_length) {
 		var textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
 		textarea.focus();
-		var start = textarea.selectionStart;
-		var end = textarea.selectionEnd;
-		var head = textarea.value.slice( 0, start );
-		var middle = textarea.value.slice( start, end );
-		var tail = textarea.value.slice( end, textarea.value.length );
+		const start = textarea.selectionStart;
+		const end = textarea.selectionEnd;
+		const head = textarea.value.slice( 0, start );
+		const middle = textarea.value.slice( start, end ).split( split );
+		const tail = textarea.value.slice( end, textarea.value.length );
+
+		// Remove extra space separator
 		if( !head ) before = before.trimStart();
 		if( !tail ) after = after.trimEnd();
-		textarea.value = head + before + middle + after + tail;
-		textarea.selectionStart = start + before.length;
-		textarea.selectionEnd = end + before.length;
-		if( sel_start !== undefined && sel_length !== undefined ) {
-			textarea.selectionStart += middle.length + sel_start;
+
+		var inner = '';
+		for( const part of middle ) {
+			if( inner.length ) inner += split;
+			inner += before + part + after;
+		}
+		textarea.value = head + inner + tail;
+
+		if( sel_start === undefined && sel_length === undefined ) {
+			// Keep selection
+			textarea.selectionStart = start + before.length;
+			textarea.selectionEnd = textarea.selectionStart + inner.length - before.length - after.length;
+		} else {
+			// New selection
+			textarea.selectionStart = start + inner.length - after.length + sel_start;
 			textarea.selectionEnd = textarea.selectionStart + sel_length;
 		}
 	}
 
 	// Install snippet for next elements:
-	for( var element of elements ) {
-		var id = element + '_';
+	for( const element of elements ) {
+		const id = element + '_';
 		var textarea = document.getElementById( element );
 		if( textarea && textarea.nodeName === 'TEXTAREA' ) {
 			var view_id = id + 'view';
