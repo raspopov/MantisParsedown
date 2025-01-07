@@ -17,7 +17,7 @@
  * Copyright (C) 2024-2025 Nikolay Raspopov <raspopov@cherubicsoft.com>
  */
 
-$( function() {
+( function() {
 	'use strict';
 
 	if( !window.XMLHttpRequest ) {
@@ -183,4 +183,4 @@ $( function() {
 			}
 		}
 	}
-} );
+} )();
