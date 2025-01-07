@@ -47,6 +47,13 @@ $( function() {
 			function() { combine( this.id, '`', '`' ); }
 		],
 		[
+			'q',
+			'tool',
+			'Quote',
+			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"/></svg>',
+			function() { combine( this.id, '\n> ', '\n\n' ); }
+		],
+		[
 			'i',
 			'tool',
 			'Italics',
@@ -65,7 +72,7 @@ $( function() {
 			'tool',
 			'Heading',
 			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 2a.75.75 0 0 1 .75.75V7h7V2.75a.75.75 0 0 1 1.5 0v10.5a.75.75 0 0 1-1.5 0V8.5h-7v4.75a.75.75 0 0 1-1.5 0V2.75A.75.75 0 0 1 3.75 2Z"/></svg>',
-			function() { combine( this.id, '###  ', '' ); }
+			function() { combine( this.id, '\n### ', '\n\n' ); }
 		]
 	];
 	
@@ -124,12 +131,12 @@ $( function() {
 		textarea.focus();
 		var start = textarea.selectionStart;
 		var end = textarea.selectionEnd;
-		textarea.value =
-			textarea.value.slice( 0, start ) +
-			before +
-			textarea.value.slice( start, end ) +
-			after +
-			textarea.value.slice( end, textarea.value.length );
+		var head = textarea.value.slice( 0, start );
+		var middle = textarea.value.slice( start, end );
+		var tail = textarea.value.slice( end, textarea.value.length );
+		if( !head ) before = before.trimStart();
+		if( !tail ) after = after.trimEnd();
+		textarea.value = head + before + middle + after + tail;
 		textarea.selectionStart = start + before.length;
 		textarea.selectionEnd = end + before.length;
 	}
