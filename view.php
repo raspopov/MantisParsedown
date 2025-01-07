@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with MantisParsedown.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2024 Nikolay Raspopov <raspopov@cherubicsoft.com>
+ * Copyright (C) 2024-2025 Nikolay Raspopov <raspopov@cherubicsoft.com>
  */
 
-require_once( dirname( dirname( __DIR__ ) ) . DIRECTORY_SEPARATOR . 'core.php' );
+require_once dirname( __DIR__, 2 ) . DIRECTORY_SEPARATOR . 'core.php';
 require_api( 'authentication_api.php' );
 require_api( 'string_api.php' );
 
 auth_ensure_user_authenticated();
 
-if( isset( $_POST['value'] ) ) {
-	echo string_display_links( $_POST['value'] );
-}
+echo string_display_links( gpc_get( 'value', '' ) );
