@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MantisParsedown.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2024 Nikolay Raspopov <raspopov@cherubicsoft.com>
+ * Copyright (C) 2024-2025 Nikolay Raspopov <raspopov@cherubicsoft.com>
  */
 
 class MantisParsedownPlugin extends MantisPlugin {
@@ -29,9 +29,9 @@ class MantisParsedownPlugin extends MantisPlugin {
 		$this->description = plugin_lang_get( 'description' );
 
 		$this->version = '1.0.0';
-		$this->requires = array(
+		$this->requires = [
 			'MantisCore' => '2.0'
-		);
+		];
 
 		$this->author = 'Nikolay Raspopov';
 		$this->contact = 'raspopov@cherubicsoft.com';
@@ -39,21 +39,29 @@ class MantisParsedownPlugin extends MantisPlugin {
 	}
 
 	/**
-	 * Register event hooks for plugin
+	 * Register event hooks for plugin.
 	 * @return array
 	 */
 	function hooks() {
-		return array(
+		return [
 			'EVENT_LAYOUT_BODY_END' => 'script',
 			'EVENT_LAYOUT_RESOURCES' => 'stylesheet',
-		);
+		];
 	}
 
-	function stylesheet( $p_event ) {
+	/**
+	 * A hook method to output style links.
+	 * @return void
+	 */
+	function stylesheet() {
 		echo "\t", '<link rel="stylesheet" href="', plugin_file( 'MantisParsedown.css' ), '">', "\n";
 	}
 
-	function script( $p_event ) {
+	/**
+	 * A hook method to output script links.
+	 * @return void
+	 */
+	function script() {
 		echo "\t", '<script src="', plugin_file( 'MantisParsedown.js' ), '"></script>', "\n";
 	}
 }
