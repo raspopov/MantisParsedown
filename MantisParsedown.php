@@ -24,7 +24,7 @@ class MantisParsedownPlugin extends MantisPlugin {
 	 * A method that populates the plugin information and minimum requirements.
 	 * @return void
 	 */
-	function register() {
+	public function register() {
 		$this->name = plugin_lang_get( 'title' );
 		$this->description = plugin_lang_get( 'description' );
 
@@ -42,18 +42,51 @@ class MantisParsedownPlugin extends MantisPlugin {
 	 * Register event hooks for plugin.
 	 * @return array
 	 */
-	function hooks() {
+	public function hooks() {
 		return [
+			'EVENT_REST_API_ROUTES' => 'routes',
 			'EVENT_LAYOUT_BODY_END' => 'script',
 			'EVENT_LAYOUT_RESOURCES' => 'stylesheet',
 		];
 	}
 
 	/**
+	 * Add the RESTful routes that are handled by this plugin.
+	 *
+	 * @param string $p_event_name The event name
+	 * @param array  $p_event_args The event arguments
+	 * @return void
+	 */
+	public function routes( $p_event_name, $p_event_args ) {
+		$t_app = $p_event_args['app'];
+		$t_plugin = $this;
+		$t_app->group(
+			plugin_route_group(),
+			function() use ( $t_app, $t_plugin ) {
+				$t_app->post( '', [$t_plugin, 'view'] );
+			}
+		);
+	}
+
+	/**
+	 * Format text for view.
+	 *
+	 * @param \Slim\Http\Request  $p_request  The request.
+	 * @param \Slim\Http\Response $p_response The response.
+	 * @param array               $p_args     Arguments
+	 * @return \Slim\Http\Response The augmented response.
+	 */
+	public function view( $p_request, $p_response, $p_args ) {
+		$t_data = $p_request->getParsedBody();
+		return $p_response->withStatus( HTTP_STATUS_SUCCESS )->write(
+			string_display_links( isset( $t_data['value'] ) ? $t_data['value'] : '' ) );
+	}
+
+	/**
 	 * A hook method to output style links.
 	 * @return void
 	 */
-	function stylesheet() {
+	public function stylesheet() {
 		echo "\t", '<link rel="stylesheet" href="', plugin_file( 'MantisParsedown.css' ), '">', "\n";
 	}
 
@@ -61,7 +94,7 @@ class MantisParsedownPlugin extends MantisPlugin {
 	 * A hook method to output script links.
 	 * @return void
 	 */
-	function script() {
+	public function script() {
 		echo "\t", '<script src="', plugin_file( 'MantisParsedown.js' ), '"></script>', "\n";
 	}
 }

@@ -131,7 +131,7 @@
 		xhr.onerror = function() {
 			view.innerHTML = 'Connection Error';
 		};
-		xhr.open( 'POST', 'plugins/MantisParsedown/view.php', true );
+		xhr.open( 'POST', 'api/rest/plugins/MantisParsedown', true );
 		xhr.setRequestHeader( 'Cache-Control', 'no-cache' );
 		xhr.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
 		var data = new FormData();
