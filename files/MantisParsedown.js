@@ -29,73 +29,64 @@
 	const buttons = [
 		[
 			'edit',
-			'',
+			'fa fa-edit',
 			'Editor',
-			'<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>',
 			function() { edit( this.id ); }
 		],
 		[
 			'preview',
-			'',
+			'fa fa-eye',
 			'Preview',
-			'<svg width="24" height="24" viewBox="0 -4 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M 0,2 C 0,2 0,0 2,0 h 12 c 0,0 2,0 2,2 v 6 c 0,0 0,2 -2,2 h -4 c 0,0.667 0.083,1.167 0.25,1.5 H 11 a 0.5,0.5 0 0 1 0,1 H 5 a 0.5,0.5 0 0 1 0,-1 H 5.75 C 5.917,11.167 6,10.667 6,10 H 2 C 2,10 0,10 0,8 Z M 1.398,1.145 A 0.758,0.758 0 0 0 1.144,1.447 1.46,1.46 0 0 0 1,2.01 V 8 c 0,0.325 0.078,0.502 0.145,0.602 0.07,0.105 0.17,0.188 0.302,0.254 A 1.464,1.464 0 0 0 1.985,8.999 L 2.01,9 H 14 c 0.325,0 0.502,-0.078 0.602,-0.145 A 0.758,0.758 0 0 0 14.856,8.553 1.464,1.464 0 0 0 14.999,8.015 L 15,7.99 V 2 C 15,1.675 14.922,1.498 14.855,1.398 A 0.757,0.757 0 0 0 14.553,1.144 1.46,1.46 0 0 0 13.99,1 H 2 C 1.675,1 1.498,1.078 1.398,1.145 Z" id="path1" /></svg>',
 			function() { preview( this.id ); }
 		],
 		// In reverse order due "float: right" style
 		[
 			'u',
-			'tool',
+			'tool fa fa-list-ul',
 			'Unordered list',
-			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>',
 			function() { combine( this.id, '- ', '\n', '\n' ); }
 		],
 		[
 			'l',
-			'tool',
+			'tool fa fa-link',
 			'Link',
-			'<svg width="24" height="24" viewBox="0 -1 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"/></svg>',
 			function() { combine( this.id, '[', '](url)', undefined, 2, 3 ); }
 		],
 		[
 			'c',
-			'tool',
+			'tool fa fa-code',
 			'Code',
-			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8l-3.72-3.72a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z"/></svg>',
 			function() { combine( this.id, '`', '`' ); }
 		],
 		[
 			'q',
-			'tool',
+			'tool fa fa-quote-left',
 			'Quote',
-			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"/></svg>',
 			function() { combine( this.id, '\n> ', '\n\n' ); }
 		],
 		[
 			'i',
-			'tool',
+			'tool fa fa-italic',
 			'Italics',
-			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M6 2.75A.75.75 0 0 1 6.75 2h6.5a.75.75 0 0 1 0 1.5h-2.505l-3.858 9H9.25a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5h2.505l3.858-9H6.75A.75.75 0 0 1 6 2.75Z"/></svg>',
 			function() { combine( this.id, '_', '_' ); }
 		],
 		[
 			'b',
-			'tool',
+			'tool fa fa-bold',
 			'Bold',
-			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M4 2h4.5a3.501 3.501 0 0 1 2.852 5.53A3.499 3.499 0 0 1 9.5 14H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm1 7v3h4.5a1.5 1.5 0 0 0 0-3Zm3.5-2a1.5 1.5 0 0 0 0-3H5v3Z"/></svg>',
 			function() { combine( this.id, '**', '**' ); }
 		],
 		[
 			'h',
-			'tool',
+			'tool fa fa-header',
 			'Heading',
-			'<svg width="24" height="24" viewBox="0 -2 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 2a.75.75 0 0 1 .75.75V7h7V2.75a.75.75 0 0 1 1.5 0v10.5a.75.75 0 0 1-1.5 0V8.5h-7v4.75a.75.75 0 0 1-1.5 0V2.75A.75.75 0 0 1 3.75 2Z"/></svg>',
 			function() { combine( this.id, '\n### ', '\n', '\n' ); }
 		]
 	];
 	
 	function tools(element,display) {
 		for( const button of buttons ) {
-			if( button[1] === 'tool' ) {
+			if( button[1].includes( 'tool' ) ) {
 				document.getElementById( element + '_' + button[0] ).style.display = display;
 			}
 		}
@@ -104,16 +95,16 @@
 	function edit(id) {
 		const element = id.substr( 0, id.lastIndexOf( '_' ) );
 		document.getElementById( element + '_view' ).style.display = 'none';
-		document.getElementById( element + '_' + buttons[0][0] ).className = 'parsedown-button active';
-		document.getElementById( element + '_' + buttons[1][0] ).className = 'parsedown-button passive';
+		document.getElementById( element + '_' + buttons[0][0] ).classList.add( 'active' );
+		document.getElementById( element + '_' + buttons[1][0] ).classList.remove( 'active' );
 		tools( element, 'block' );
 		document.getElementById( element ).style.display = 'block';
 	}
 
 	function preview(id) {
 		const element = id.substr( 0, id.lastIndexOf( '_' ) );
-		document.getElementById( element + '_' + buttons[0][0] ).className = 'parsedown-button passive';
-		document.getElementById( element + '_' + buttons[1][0] ).className = 'parsedown-button active';
+		document.getElementById( element + '_' + buttons[0][0] ).classList.remove( 'active' );
+		document.getElementById( element + '_' + buttons[1][0] ).classList.add( 'active' );
 		tools( element, 'none' );
 
 		var textarea = document.getElementById( element );
@@ -143,7 +134,7 @@
 		xhr.send( data );
 	}
 
-	function combine(id, before, after, split, sel_start, sel_length) {
+	function combine(id, before, after = '', split, sel_start, sel_length) {
 		var textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
 		textarea.focus();
 		const start = textarea.selectionStart;
@@ -195,8 +186,7 @@
 						bt.className = 'parsedown-button ' + button[1];
 					}
 					bt.title = button[2];
-					bt.innerHTML = button[3];
-					bt.onclick = button[4];
+					bt.onclick = button[3];
 				}
 				edit( id );
 			}
