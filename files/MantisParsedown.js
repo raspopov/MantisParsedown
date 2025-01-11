@@ -41,6 +41,12 @@
 		],
 		// In reverse order due "float: right" style
 		[
+			's',
+			'tool fa fa-minus',
+			'Separator',
+			function() { combine( this.id, '\n___\n' ); }
+		],
+		[
 			'u',
 			'tool fa fa-list-ul',
 			'Unordered list',
