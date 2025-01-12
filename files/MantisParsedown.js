@@ -51,14 +51,19 @@
 			function() { combine( this.id, '\n___\n' ); }
 		],
 		[
+			'tool fa fa-list-ol',
+			'Ordered list',
+			function() { combine( this.id, '\n%. ', '\n', true ); } // '%' replaced by line number
+		],
+		[
 			'tool fa fa-list-ul',
 			'Unordered list',
-			function() { combine( this.id, '- ', '\n', '\n' ); }
+			function() { combine( this.id, '\n- ', '\n', true ); }
 		],
 		[
 			'tool fa fa-link',
 			'Link',
-			function() { combine( this.id, '[', '](url)', undefined, 2, 3 ); }
+			function() { combine( this.id, '[', '](url)', false, 2, 3 ); }
 		],
 		[
 			'tool fa fa-code',
@@ -93,7 +98,7 @@
 		[
 			'tool fa fa-header',
 			'Heading',
-			function() { combine( this.id, '\n### ', '\n', '\n' ); }
+			function() { combine( this.id, '\n### ', '\n', true ); }
 		]
 	];
 	
@@ -145,13 +150,13 @@
 		xhr.send( data );
 	}
 
-	function combine(id, before, after = '', split, sel_start, sel_length) {
+	function combine(id, before, after = '', multiline = false, sel_start, sel_length) {
 		let textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
 		textarea.focus();
 		const start = textarea.selectionStart;
 		const end = textarea.selectionEnd;
 		const head = textarea.value.slice( 0, start );
-		const middle = textarea.value.slice( start, end ).split( split );
+		const middle = textarea.value.slice( start, end );
 		const tail = textarea.value.slice( end, textarea.value.length );
 
 		// Remove extra space separator
@@ -159,24 +164,35 @@
 		if( !tail ) after = after.trimEnd();
 
 		let inner = '';
-		for( const part of middle ) {
-			if( inner.length ) inner += split;
-			inner += before + part + after;
+		if( multiline ) {
+			let i = 1;
+			for( const part of middle.split( '\n' ) ) {
+				if( !inner.length ) {
+					// First line
+					inner += before.replace( '%', i ) + part;
+				} else {
+					// Next line
+					inner += '\n' + before.trimStart().replace( '%', i ) + part;
+				}
+				i++;
+			}
+		} else {
+			inner = before + middle;
 		}
-		textarea.value = head + inner + tail;
+		textarea.value = head + inner + after + tail;
 
 		if( sel_start === undefined && sel_length === undefined ) {
 			// Keep selection
 			textarea.selectionStart = start + before.length;
-			textarea.selectionEnd = textarea.selectionStart + inner.length - before.length - after.length;
+			textarea.selectionEnd = textarea.selectionStart + inner.length - before.length;
 		} else {
 			// New selection
-			textarea.selectionStart = start + inner.length - after.length + sel_start;
+			textarea.selectionStart = start + inner.length + sel_start;
 			textarea.selectionEnd = textarea.selectionStart + sel_length;
 		}
 	}
 
-	// Install snippet for next elements:
+	// Install snippet
 	for( const element of elements ) {
 		const id = element + '_';
 		let textarea = document.getElementById( element );
