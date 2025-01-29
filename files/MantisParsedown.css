@@ -1,37 +1,37 @@
-
-.parsedown-bar {
-	margin-bottom: 0.4em;
+.pd-bar {
+	margin-bottom: 0.1em;
 }
 
-.parsedown-button {
+.pd-button {
 	color: #5090C1;
 	font-size: 1.5em;
 	background-color: white;
 	border: 1px solid #5090C1;
 	border-radius: 0.2em;
-	margin-left: 0.1em;
-	margin-right: 0.1em;
+	margin: 0.1em;
 	min-width: 1.6em;
 	min-height: 1.6em;
 }
 
-.parsedown-button.active {
+.pd-active {
 	color: black;
 	background-color: #E7F2F8;
 }
 
-.parsedown-button.tool {
+.pd-tool {
 	float: right;
 }
 
-.parsedown-button:hover {
+.pd-button:hover {
 	color: black;
 	background-color: #f5f5f5;
 }
 
-.parsedown-view {
-	box-sizing: content-box;
+.pd-view {
 	height: auto;
 	width: auto;
+}
+
+.pd-hide {
 	display: none;
 }

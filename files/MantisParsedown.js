@@ -36,7 +36,7 @@
 	const buttons = [
 		[
 			'fa fa-edit',
-			'Editor',
+			'Edit',
 			function() { edit( this.id ); }
 		],
 		[
@@ -46,92 +46,104 @@
 		],
 		// In reverse order due "float: right" style
 		[
-			'tool fa fa-minus',
+			'fa fa-minus',
 			'Separator',
 			function() { combine( this.id, '\n___\n' ); }
 		],
 		[
-			'tool fa fa-list-ol',
+			'fa fa-list-ol',
 			'Ordered list',
 			function() { combine( this.id, '\n%. ', '\n', true ); } // '%' replaced by line number
 		],
 		[
-			'tool fa fa-list-ul',
+			'fa fa-list-ul',
 			'Unordered list',
 			function() { combine( this.id, '\n- ', '\n', true ); }
 		],
 		[
-			'tool fa fa-link',
+			'fa fa-link',
 			'Link',
 			function() { combine( this.id, '[', '](url)', false, 2, 3 ); }
 		],
 		[
-			'tool fa fa-code',
+			'fa fa-code',
 			'Code',
 			function() { combine( this.id, '`', '`' ); }
 		],
 		[
-			'tool fa fa-quote-left',
+			'fa fa-quote-left',
 			'Quote',
 			function() { combine( this.id, '\n> ', '\n\n' ); }
 		],
 		[
-			'tool fa fa-underline',
+			'fa fa-underline',
 			'Underline',
 			function() { combine( this.id, '<u>', '</u>' ); }
 		],
 		[
-			'tool fa fa-strikethrough',
+			'fa fa-strikethrough',
 			'Strikethrough',
 			function() { combine( this.id, '~~', '~~' ); }
 		],
 		[
-			'tool fa fa-italic',
+			'fa fa-italic',
 			'Italics',
 			function() { combine( this.id, '_', '_' ); }
 		],
 		[
-			'tool fa fa-bold',
+			'fa fa-bold',
 			'Bold',
 			function() { combine( this.id, '**', '**' ); }
 		],
 		[
-			'tool fa fa-header',
+			'fa fa-header',
 			'Heading',
 			function() { combine( this.id, '\n### ', '\n', true ); }
 		]
 	];
 	
 	function tools(element, display) {
+		let textarea = document.getElementById( element );
+		let view = document.getElementById( element + '_view' );
+		let editor = document.getElementById( element + '_0' );
+		let previewer = document.getElementById( element + '_1' );
+		if( display ) {
+			view.classList.add( 'pd-hide' );
+			textarea.classList.remove( 'pd-hide' );			
+			editor.classList.add( 'pd-active' );
+			previewer.classList.remove( 'pd-active' );
+		} else {
+			if( textarea.clientHeight > 0 ) {
+				view.style.minHeight = textarea.clientHeight + 'px';
+			}
+			textarea.classList.add( 'pd-hide' );
+			view.classList.remove( 'pd-hide' );
+			editor.classList.remove( 'pd-active' );
+			previewer.classList.add( 'pd-active' );
+		}
 		for( let i = 2; i < buttons.length; i++ ) {
-			document.getElementById( element + '_' + i ).style.display = display;
+			let tool = document.getElementById( element + '_' + i );
+			if( display ) {
+				tool.classList.add( 'pd-tool' );
+				tool.classList.remove( 'pd-hide' );
+			} else {
+				tool.classList.add( 'pd-hide' );
+			}
 		}
 	}
 
 	function edit(id) {
 		const element = id.substr( 0, id.lastIndexOf( '_' ) );
-		document.getElementById( element + '_view' ).style.display = 'none';
-		document.getElementById( element + '_0' ).classList.add( 'active' );
-		document.getElementById( element + '_1' ).classList.remove( 'active' );
-		tools( element, 'block' );
-		document.getElementById( element ).style.display = 'block';
+		tools( element, true );
 	}
 
 	function preview(id) {
 		const element = id.substr( 0, id.lastIndexOf( '_' ) );
-		document.getElementById( element + '_0' ).classList.remove( 'active' );
-		document.getElementById( element + '_1' ).classList.add( 'active' );
-		tools( element, 'none' );
+		tools( element, false );
 
 		let textarea = document.getElementById( element );
 		let view = document.getElementById( element + '_view' );
 		view.innerHTML = '';
-		if( textarea.style.display !== 'none' ) {
-			view.style.minHeight = textarea.clientHeight + 'px';
-			textarea.style.display = 'none';
-			view.style.display = 'block';
-		}
-
 		let xhr = new XMLHttpRequest();
 		xhr.onload = function() {
 			if( xhr.readyState === XMLHttpRequest.DONE ) {
@@ -202,14 +214,14 @@
 			if( !view ) {
 				view = textarea.insertAdjacentElement( 'afterEnd', document.createElement( 'div' ) );
 				view.id = view_id;
-				view.className = 'form-control parsedown-view';
+				view.className = 'form-control pd-view';
 				let btns = textarea.insertAdjacentElement( 'beforeBegin', document.createElement( 'div' ) );
-				btns.className = 'parsedown-bar';
+				btns.className = 'pd-bar';
 				for( let i = 0; i < buttons.length; i++ ) {
 					let bt = btns.insertAdjacentElement( 'beforeEnd', document.createElement( 'button' ) );
 					bt.id = id + i;
 					bt.type = 'button';
-					bt.className = 'parsedown-button ' + buttons[i][0];
+					bt.className = buttons[i][0] + ' pd-button';
 					bt.title = buttons[i][1];
 					bt.onclick = buttons[i][2];
 				}
