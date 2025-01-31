@@ -17,181 +17,248 @@
  * Copyright (C) 2024-2025 Nikolay Raspopov <raspopov@cherubicsoft.com>
  */
 
-( function() {
+// Depends on Font Awesome
+
+( function(script) {
 	'use strict';
 
-	if( !window.XMLHttpRequest ) {
-		return;
-	}
+	var bugnote_link_tag = script.getAttribute( 'bugnote_link_tag' );
+	var bug_link_tag = script.getAttribute( 'bug_link_tag' );
+	var mentions_tag = script.getAttribute( 'mentions_tag' );
+	var elements = script.getAttribute( 'elements' ).split( ',' );
 
-	const elements = [
-		'description',
-		'steps_to_reproduce',
-		'additional_info',
-		'additional_information',
-		'bugnote_text',
-		'project-description'
-	];
-
-	const buttons = [
+	var buttons = [
+		// In reverse order due "float" style
 		[
-			'fa fa-edit',
-			'Edit',
-			function() { edit( this.id ); }
-		],
-		[
-			'fa fa-eye',
+			'fa-eye',
 			'Preview',
-			function() { preview( this.id ); }
+			function() { tools( this.id, false ); }
 		],
-		// In reverse order due "float: right" style
 		[
-			'fa fa-minus',
-			'Separator',
+			'fa-edit',
+			'Edit',
+			function() { tools( this.id, true ); }
+		],
+		// In reverse order due "float" style
+		[
+			'fa-comment',
+			( 'Note link:\n%1note-number' ).replace( '%1', bugnote_link_tag ),
+			function() { combine( this.id, bugnote_link_tag ); }
+		],
+		[
+			'fa-list-alt',
+			( 'Issue link:\n%1issue-number' ).replace( '%1', bug_link_tag ),
+			function() { combine( this.id, bug_link_tag ); }
+		],
+		[
+			'fa-user',
+			( 'Mention link:\n%1username' ).replace( '%1', mentions_tag ),
+			function() { combine( this.id, mentions_tag ); }
+		],
+		[
+			'fa-table',
+			'Table:\n|header|\n|-|\n|data|',
+			function() { combine( this.id, '\n\n|', '|\n|-|\n|data|\n\n', false, 7, 4 ); }
+		],
+		[
+			'fa-minus',
+			'Separator:\n___',
 			function() { combine( this.id, '\n___\n' ); }
 		],
 		[
-			'fa fa-list-ol',
-			'Ordered list',
+			'fa-list-ol',
+			'Ordered list:\n1. text',
 			function() { combine( this.id, '\n%. ', '\n', true ); } // '%' replaced by line number
 		],
 		[
-			'fa fa-list-ul',
-			'Unordered list',
+			'fa-list-ul',
+			'Unordered list:\n- text',
 			function() { combine( this.id, '\n- ', '\n', true ); }
 		],
 		[
-			'fa fa-link',
-			'Link',
+			'fa-picture-o',
+			'Image:\n![text](url "title")',
+			function() { combine( this.id, '![', '](url)', false, 2, 3 ); }
+		],
+		[
+			'fa-link',
+			'Link:\n[text](url "title")',
 			function() { combine( this.id, '[', '](url)', false, 2, 3 ); }
 		],
 		[
-			'fa fa-code',
-			'Code',
-			function() { combine( this.id, '`', '`' ); }
+			'fa-code',
+			'Code:\n`text` or ```multi-line text```',
+			function() { code( this.id ); }
 		],
 		[
-			'fa fa-quote-left',
-			'Quote',
+			'fa-quote-left',
+			'Quote:\n> text',
 			function() { combine( this.id, '\n> ', '\n\n' ); }
 		],
 		[
-			'fa fa-underline',
-			'Underline',
+			'fa-underline',
+			'Underline:\n<u>text</u>',
 			function() { combine( this.id, '<u>', '</u>' ); }
 		],
 		[
-			'fa fa-strikethrough',
-			'Strikethrough',
+			'fa-strikethrough',
+			'Strikethrough:\n~~text~~',
 			function() { combine( this.id, '~~', '~~' ); }
 		],
 		[
-			'fa fa-italic',
-			'Italics',
+			'fa-italic',
+			'Italics:\n_text_',
 			function() { combine( this.id, '_', '_' ); }
 		],
 		[
-			'fa fa-bold',
-			'Bold',
+			'fa-bold',
+			'Bold:\n**text**',
 			function() { combine( this.id, '**', '**' ); }
 		],
 		[
-			'fa fa-header',
-			'Heading',
+			'fa-header',
+			'Heading:\n# h1, ## h2 ... ###### h6',
 			function() { combine( this.id, '\n### ', '\n', true ); }
 		]
 	];
-	
-	function tools(element, display) {
-		let textarea = document.getElementById( element );
-		let view = document.getElementById( element + '_view' );
-		let editor = document.getElementById( element + '_0' );
-		let previewer = document.getElementById( element + '_1' );
-		if( display ) {
-			view.classList.add( 'pd-hide' );
-			textarea.classList.remove( 'pd-hide' );			
-			editor.classList.add( 'pd-active' );
-			previewer.classList.remove( 'pd-active' );
+
+	function trimStart(str) {
+		if( str && str.length && str[ 0 ] === '\n' ) {
+			return str.substr( 1 );
+		}
+		return str;
+	}
+
+	function trimEnd(str) {
+		if( str && str.length && str[ str.length - 1 ] === '\n' ) {
+			return str.substr( 0, str.length - 1 );
+		}
+		return str;
+	}
+
+	function addClassName(element, name) {
+		var i = element.className.indexOf( name );
+		if( i < 0 ) {
+			element.className += ' ' + name;
+		}
+	}
+
+	function removeClassName(element, name) {
+		var i = element.className.indexOf( name );
+		if( i >= 0 ) {
+			element.className = ( i ? element.className.substr( 0, i - 1 ) : '' ) +
+				element.className.substr( i + name.length );
+		}
+	}
+
+	function tools(id, is_edit) {
+		var element = id.substr( 0, id.lastIndexOf( '_' ) );
+		var textarea = document.getElementById( element );
+		var view = document.getElementById( element + '_view' );
+		var btn_edit = document.getElementById( element + '_0' );
+		var btn_preview = document.getElementById( element + '_1' );
+
+		// Switch edit/preview windows
+		if( is_edit ) {
+			addClassName( view, 'pd-hide' );
+			removeClassName( textarea, 'pd-hide' );
 		} else {
 			if( textarea.clientHeight > 0 ) {
 				view.style.minHeight = textarea.clientHeight + 'px';
 			}
-			textarea.classList.add( 'pd-hide' );
-			view.classList.remove( 'pd-hide' );
-			editor.classList.remove( 'pd-active' );
-			previewer.classList.add( 'pd-active' );
+			addClassName( textarea, 'pd-hide' );
+			removeClassName( view, 'pd-hide' );
 		}
-		for( let i = 2; i < buttons.length; i++ ) {
-			let tool = document.getElementById( element + '_' + i );
-			if( display ) {
-				tool.classList.add( 'pd-tool' );
-				tool.classList.remove( 'pd-hide' );
+
+		// Switch toolbar buttons
+		if( is_edit ) {
+			addClassName( btn_edit, 'pd-active' );
+			removeClassName( btn_preview, 'pd-active' );
+			addClassName( btn_preview, 'fa-pull-left' );
+		} else {
+			removeClassName( btn_edit, 'pd-active' );
+			addClassName( btn_preview, 'pd-active' );
+		}
+		for( var i = 2; i < buttons.length; i++ ) {
+			var btn_tool = document.getElementById( element + '_' + i );
+			if( is_edit ) {
+				addClassName( btn_tool, 'fa-pull-right' );
+				removeClassName( btn_tool, 'pd-hide' );
 			} else {
-				tool.classList.add( 'pd-hide' );
+				addClassName( btn_tool, 'pd-hide' );
 			}
+		}
+
+		// Ajax preview
+		if( !is_edit ) {
+			view.innerHTML = '<i class="fa fa-spin fa-spinner fa-2x"></i>';
+			var xhr;
+			if( typeof window.XMLHttpRequest === 'function' ) {
+				xhr = new XMLHttpRequest();
+			} else {
+				xhr = new ActiveXObject( 'Microsoft.XMLHTTP' );
+			}
+			xhr.onreadystatechange = function() {
+				if( xhr.readyState === 4 ) {
+					view.innerHTML = xhr.responseText;
+				}
+			}
+			xhr.open( 'POST', 'api/rest/plugins/MantisParsedown', true );
+			xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+			xhr.setRequestHeader( 'Cache-Control', 'no-cache' );
+			xhr.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
+			xhr.send( 'key=' + encodeURIComponent( element ) + '&value=' + encodeURIComponent( textarea.value ) );
 		}
 	}
 
-	function edit(id) {
-		const element = id.substr( 0, id.lastIndexOf( '_' ) );
-		tools( element, true );
+	function code(id) {
+		var textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
+		if( textarea.value.slice( textarea.selectionStart, textarea.selectionEnd ).indexOf( '\n' ) < 0 ) {
+			// Single line code
+			combine( id, '`', '`' );
+		} else {
+			// Multi-line code
+			combine( id, '\n```\n', '\n```\n' );
+		}
 	}
 
-	function preview(id) {
-		const element = id.substr( 0, id.lastIndexOf( '_' ) );
-		tools( element, false );
-
-		let textarea = document.getElementById( element );
-		let view = document.getElementById( element + '_view' );
-		view.innerHTML = '';
-		let xhr = new XMLHttpRequest();
-		xhr.onload = function() {
-			if( xhr.readyState === XMLHttpRequest.DONE ) {
-				view.innerHTML = xhr.responseText;
-			}
-		};
-		xhr.onerror = function() {
-			view.innerHTML = 'Connection Error';
-		};
-		xhr.open( 'POST', 'api/rest/plugins/MantisParsedown', true );
-		xhr.setRequestHeader( 'Cache-Control', 'no-cache' );
-		xhr.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
-		let data = new FormData();
-		data.append( 'key', element );
-		data.append( 'value', textarea.value );
-		xhr.send( data );
-	}
-
-	function combine(id, before, after = '', multiline = false, sel_start, sel_length) {
-		let textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
+	function combine(id, before, after, multiline, sel_start, sel_length) {
+		var textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
 		textarea.focus();
-		const start = textarea.selectionStart;
-		const end = textarea.selectionEnd;
-		const head = textarea.value.slice( 0, start );
-		const middle = textarea.value.slice( start, end );
-		const tail = textarea.value.slice( end, textarea.value.length );
+		var start = textarea.selectionStart;
+		var end = textarea.selectionEnd;
+		var head = textarea.value.slice( 0, start );
+		var middle = textarea.value.slice( start, end );
+		var tail = textarea.value.slice( end, textarea.value.length );
 
 		// Remove extra space separator
-		if( !head ) before = before.trimStart();
-		if( !tail ) after = after.trimEnd();
+		if( !head ) before = trimStart( before );
+		if( !tail ) after = trimEnd( after );
 
-		let inner = '';
-		if( multiline ) {
-			let i = 1;
-			for( const part of middle.split( '\n' ) ) {
+		var inner = '';
+		if( multiline === true ) {
+			var i = 1;
+			var parts = middle.split( '\n' );
+			for( var part in parts ) {
 				if( !inner.length ) {
 					// First line
-					inner += before.replace( '%', i ) + part;
+					inner += before.replace( '%', i ) + parts[part];
 				} else {
 					// Next line
-					inner += '\n' + before.trimStart().replace( '%', i ) + part;
+					inner += '\n' + trimStart( before ).replace( '%', i ) + parts[part];
 				}
 				i++;
 			}
 		} else {
 			inner = before + middle;
 		}
-		textarea.value = head + inner + after + tail;
+
+		var str = '';
+		if( head  ) str += head;
+		if( inner ) str += inner;
+		if( after ) str += after;
+		if( tail  ) str += tail;
+		textarea.value = str;
 
 		if( sel_start === undefined && sel_length === undefined ) {
 			// Keep selection
@@ -205,28 +272,31 @@
 	}
 
 	// Install snippet
-	for( const element of elements ) {
-		const id = element + '_';
-		let textarea = document.getElementById( element );
+	for( var element in elements ) {
+		var id = elements[element];
+		var textarea = document.getElementById( id );
+		id += '_';
 		if( textarea && textarea.nodeName === 'TEXTAREA' ) {
-			let view_id = id + 'view';
-			let view = document.getElementById( view_id );
+			var view_id = id + 'view';
+			var view = document.getElementById( view_id );
 			if( !view ) {
-				view = textarea.insertAdjacentElement( 'afterEnd', document.createElement( 'div' ) );
+				view = document.createElement( 'div' );
 				view.id = view_id;
 				view.className = 'form-control pd-view';
-				let btns = textarea.insertAdjacentElement( 'beforeBegin', document.createElement( 'div' ) );
-				btns.className = 'pd-bar';
-				for( let i = 0; i < buttons.length; i++ ) {
-					let bt = btns.insertAdjacentElement( 'beforeEnd', document.createElement( 'button' ) );
+				textarea.insertAdjacentElement( 'afterEnd', view );
+				var btns = document.createElement( 'div' );
+				textarea.insertAdjacentElement( 'beforeBegin', btns );
+				for( var i in buttons ) {
+					var bt = document.createElement( 'button' );
+					bt.setAttribute( 'type', 'button' );
 					bt.id = id + i;
-					bt.type = 'button';
-					bt.className = buttons[i][0] + ' pd-button';
+					bt.className = 'pd-button fa ' + buttons[i][0];
 					bt.title = buttons[i][1];
 					bt.onclick = buttons[i][2];
+					btns.insertAdjacentElement( 'beforeEnd', bt );
 				}
-				edit( id );
+				tools( id, true );
 			}
 		}
 	}
-} )();
+} )( document.getElementById( 'mantisparsedown_script' ) );

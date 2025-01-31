@@ -39,6 +39,24 @@ class MantisParsedownPlugin extends MantisPlugin {
 	}
 
 	/**
+	 * Default plugin configuration
+	 * @return array
+	 */
+	function config() {
+		return [
+			// <textarea> element ids
+			'elements' => [
+				'description',
+				'steps_to_reproduce',
+				'additional_info',
+				'additional_information',
+				'bugnote_text',
+				'project-description',
+			],
+		];
+	}
+
+	/**
 	 * Register event hooks for plugin.
 	 * @return array
 	 */
@@ -95,6 +113,11 @@ class MantisParsedownPlugin extends MantisPlugin {
 	 * @return void
 	 */
 	public function script() {
-		echo "\t", '<script src="', plugin_file( 'MantisParsedown.js' ), '"></script>', "\n";
+		echo "\t", '<script id="mantisparsedown_script" ',
+			'bugnote_link_tag="', htmlspecialchars( config_get( 'bugnote_link_tag' ) ), '" ',
+			'bug_link_tag="', htmlspecialchars( config_get( 'bug_link_tag' ) ), '" ',
+			'mentions_tag="', htmlspecialchars( config_get( 'mentions_tag' ) ), '" ',
+			'elements="', implode( ',', plugin_config_get( 'elements' ) ), '" ',
+			'src="', plugin_file( 'MantisParsedown.js' ), '"></script>', "\n";
 	}
 }
