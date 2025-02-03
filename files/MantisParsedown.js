@@ -155,8 +155,8 @@
 		var element = id.substr( 0, id.lastIndexOf( '_' ) );
 		var textarea = document.getElementById( element );
 		var view = document.getElementById( element + '_view' );
-		var btn_edit = document.getElementById( element + '_0' );
-		var btn_preview = document.getElementById( element + '_1' );
+		var btn_edit = document.getElementById( element + '_1' );
+		var btn_preview = document.getElementById( element + '_0' );
 
 		// Switch edit/preview windows
 		if( is_edit ) {
@@ -172,9 +172,9 @@
 
 		// Switch toolbar buttons
 		if( is_edit ) {
+			addClassName( btn_edit, 'fa-pull-left' );
 			addClassName( btn_edit, 'pd-active' );
 			removeClassName( btn_preview, 'pd-active' );
-			addClassName( btn_preview, 'fa-pull-left' );
 		} else {
 			removeClassName( btn_edit, 'pd-active' );
 			addClassName( btn_preview, 'pd-active' );
