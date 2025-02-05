@@ -113,11 +113,12 @@ class MantisParsedownPlugin extends MantisPlugin {
 	 * @return void
 	 */
 	public function script() {
-		echo "\t", '<script id="mantisparsedown_script" ',
-			'bugnote_link_tag="', htmlspecialchars( config_get( 'bugnote_link_tag' ) ), '" ',
-			'bug_link_tag="', htmlspecialchars( config_get( 'bug_link_tag' ) ), '" ',
-			'mentions_tag="', htmlspecialchars( config_get( 'mentions_tag' ) ), '" ',
-			'elements="', implode( ',', plugin_config_get( 'elements' ) ), '" ',
-			'src="', plugin_file( 'MantisParsedown.js' ), '"></script>', "\n";
+		echo "\t", '<script ',
+			'src="', plugin_file( 'MantisParsedown.js' ), '" ',
+			'data-bugnote="', htmlspecialchars( config_get( 'bugnote_link_tag' ) ), '" ',
+			'data-bug="', htmlspecialchars( config_get( 'bug_link_tag' ) ), '" ',
+			'data-mentions="', htmlspecialchars( config_get( 'mentions_tag' ) ), '" ',
+			'data-elements="', implode( ',', plugin_config_get( 'elements' ) ), '" ',
+			'id="mantisparsedown_script" async></script>', "\n";
 	}
 }

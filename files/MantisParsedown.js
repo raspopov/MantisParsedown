@@ -22,38 +22,37 @@
 ( function(script) {
 	'use strict';
 
-	var bugnote_link_tag = script.getAttribute( 'bugnote_link_tag' );
-	var bug_link_tag = script.getAttribute( 'bug_link_tag' );
-	var mentions_tag = script.getAttribute( 'mentions_tag' );
-	var elements = script.getAttribute( 'elements' ).split( ',' );
+	var bugnote = script.getAttribute( 'data-bugnote' );
+	var bug = script.getAttribute( 'data-bug' );
+	var mentions = script.getAttribute( 'data-mentions' );
+	var elements = script.getAttribute( 'data-elements' ).split( ',' );
 
 	var buttons = [
-		// In reverse order due "float" style
-		[
-			'fa-eye',
-			'Preview',
-			function() { tools( this.id, false ); }
-		],
 		[
 			'fa-edit',
 			'Edit',
 			function() { tools( this.id, true ); }
 		],
+		[
+			'fa-eye',
+			'Preview',
+			function() { tools( this.id, false ); }
+		],
 		// In reverse order due "float" style
 		[
 			'fa-comment',
-			( 'Note link:\n%1note-number' ).replace( '%1', bugnote_link_tag ),
-			function() { combine( this.id, bugnote_link_tag ); }
+			( 'Note link:\n%1note-number' ).replace( '%1', bugnote ),
+			function() { combine( this.id, bugnote ); }
 		],
 		[
 			'fa-list-alt',
-			( 'Issue link:\n%1issue-number' ).replace( '%1', bug_link_tag ),
-			function() { combine( this.id, bug_link_tag ); }
+			( 'Issue link:\n%1issue-number' ).replace( '%1', bug ),
+			function() { combine( this.id, bug ); }
 		],
 		[
 			'fa-user',
-			( 'Mention link:\n%1username' ).replace( '%1', mentions_tag ),
-			function() { combine( this.id, mentions_tag ); }
+			( 'Mention link:\n%1username' ).replace( '%1', mentions ),
+			function() { combine( this.id, mentions ); }
 		],
 		[
 			'fa-table',
@@ -155,8 +154,8 @@
 		var element = id.substr( 0, id.lastIndexOf( '_' ) );
 		var textarea = document.getElementById( element );
 		var view = document.getElementById( element + '_view' );
-		var btn_edit = document.getElementById( element + '_1' );
-		var btn_preview = document.getElementById( element + '_0' );
+		var btn_edit = document.getElementById( element + '_0' );
+		var btn_preview = document.getElementById( element + '_1' );
 
 		// Switch edit/preview windows
 		if( is_edit ) {
@@ -172,7 +171,6 @@
 
 		// Switch toolbar buttons
 		if( is_edit ) {
-			addClassName( btn_edit, 'fa-pull-left' );
 			addClassName( btn_edit, 'pd-active' );
 			removeClassName( btn_preview, 'pd-active' );
 		} else {
@@ -182,7 +180,7 @@
 		for( var i = 2; i < buttons.length; i++ ) {
 			var btn_tool = document.getElementById( element + '_' + i );
 			if( is_edit ) {
-				addClassName( btn_tool, 'fa-pull-right' );
+				addClassName( btn_tool, 'pd-right' );
 				removeClassName( btn_tool, 'pd-hide' );
 			} else {
 				addClassName( btn_tool, 'pd-hide' );

@@ -4,9 +4,8 @@
 	background-color: white;
 	border: 1px solid #5090C1;
 	border-radius: 0.2em;
-	min-width: 1.8em;
 	min-height: 1.5em;
-	margin-bottom: 0.3em;
+	margin: 0 0.3em 0.3em 0;
 }
 
 .pd-active {
@@ -26,4 +25,8 @@
 
 .pd-hide {
 	display: none;
+}
+
+.pd-right {
+	float: right;
 }
