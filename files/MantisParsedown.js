@@ -17,15 +17,16 @@
  * Copyright (C) 2024-2025 Nikolay Raspopov <raspopov@cherubicsoft.com>
  */
 
-// Depends on Font Awesome
+// Depends on jQuery and Font Awesome
 
-( function(script) {
+$( function() {
 	'use strict';
 
-	var bugnote = script.getAttribute( 'data-bugnote' );
-	var bug = script.getAttribute( 'data-bug' );
-	var mentions = script.getAttribute( 'data-mentions' );
-	var elements = script.getAttribute( 'data-elements' ).split( ',' );
+	var script = $( '#mantisparsedown_script' );
+	var bugnote = script.attr( 'data-bugnote' );
+	var bug = script.attr( 'data-bug' );
+	var mentions = script.attr( 'data-mentions' );
+	var elements = script.attr( 'data-elements' ).split( ',' );
 
 	var buttons = [
 		[
@@ -106,112 +107,77 @@
 		],
 		[
 			'fa-italic',
-			'Italics:\n_text_',
-			function() { combine( this.id, '_', '_' ); }
+			'Italics (Ctrl+I):\n_text_',
+			function() { italic( this.id ); }
 		],
 		[
 			'fa-bold',
-			'Bold:\n**text**',
-			function() { combine( this.id, '**', '**' ); }
+			'Bold (Ctrl+B):\n**text**',
+			function() { bold( this.id ); }
 		],
 		[
 			'fa-header',
-			'Heading:\n# h1, ## h2 ... ###### h6',
-			function() { combine( this.id, '\n### ', '\n', true ); }
+			'Heading (Ctrl+H):\n# h1, ## h2 ... ###### h6',
+			function() { head( this.id ); }
 		]
 	];
 
 	function trimStart(str) {
-		if( str && str.length && str[ 0 ] === '\n' ) {
-			return str.substr( 1 );
-		}
-		return str;
+		return ( str && str.length && str[ 0 ] === '\n' ) ?
+			str.substr( 1 ) : str;
 	}
 
 	function trimEnd(str) {
-		if( str && str.length && str[ str.length - 1 ] === '\n' ) {
-			return str.substr( 0, str.length - 1 );
-		}
-		return str;
-	}
-
-	function addClassName(element, name) {
-		var i = element.className.indexOf( name );
-		if( i < 0 ) {
-			element.className += ' ' + name;
-		}
-	}
-
-	function removeClassName(element, name) {
-		var i = element.className.indexOf( name );
-		if( i >= 0 ) {
-			element.className = ( i ? element.className.substr( 0, i - 1 ) : '' ) +
-				element.className.substr( i + name.length );
-		}
+		return ( str && str.length && str[ str.length - 1 ] === '\n' ) ?
+			str.substr( 0, str.length - 1 ) : str;
 	}
 
 	function tools(id, is_edit) {
 		var element = id.substr( 0, id.lastIndexOf( '_' ) );
-		var textarea = document.getElementById( element );
-		var view = document.getElementById( element + '_view' );
-		var btn_edit = document.getElementById( element + '_0' );
-		var btn_preview = document.getElementById( element + '_1' );
+		var textarea = $( '#' + element );
+		var view = $( '#' + element + '_view' );
+		var btn_edit = $( '#' + element + '_0' );
+		var btn_preview = $( '#' + element + '_1' );
 
 		// Switch edit/preview windows
 		if( is_edit ) {
-			addClassName( view, 'pd-hide' );
-			removeClassName( textarea, 'pd-hide' );
+			view.addClass( 'pd-hide' );
+			textarea.removeClass( 'pd-hide' ).focus();
 		} else {
-			if( textarea.clientHeight > 0 ) {
-				view.style.minHeight = textarea.clientHeight + 'px';
+			if( textarea.height() > 0 ) {
+				view.height( textarea.height() );
 			}
-			addClassName( textarea, 'pd-hide' );
-			removeClassName( view, 'pd-hide' );
+			textarea.addClass( 'pd-hide' );
+			view.removeClass( 'pd-hide' );
 		}
 
 		// Switch toolbar buttons
 		if( is_edit ) {
-			addClassName( btn_edit, 'pd-active' );
-			removeClassName( btn_preview, 'pd-active' );
+			btn_edit.addClass( 'pd-active' );
+			btn_preview.removeClass( 'pd-active' );
 		} else {
-			removeClassName( btn_edit, 'pd-active' );
-			addClassName( btn_preview, 'pd-active' );
+			btn_edit.removeClass( 'pd-active' );
+			btn_preview.addClass( 'pd-active' );
 		}
 		for( var i = 2; i < buttons.length; i++ ) {
-			var btn_tool = document.getElementById( element + '_' + i );
+			var btn_tool = $( '#' + element + '_' + i );
 			if( is_edit ) {
-				addClassName( btn_tool, 'pd-right' );
-				removeClassName( btn_tool, 'pd-hide' );
+				btn_tool.addClass( 'pd-right' ).removeClass( 'pd-hide' );
 			} else {
-				addClassName( btn_tool, 'pd-hide' );
+				btn_tool.addClass( 'pd-hide' );
 			}
 		}
 
 		// Ajax preview
 		if( !is_edit ) {
-			view.innerHTML = '<i class="fa fa-spin fa-spinner fa-2x"></i>';
-			var xhr;
-			if( typeof window.XMLHttpRequest === 'function' ) {
-				xhr = new XMLHttpRequest();
-			} else {
-				xhr = new ActiveXObject( 'Microsoft.XMLHTTP' );
-			}
-			xhr.onreadystatechange = function() {
-				if( xhr.readyState === 4 ) {
-					view.innerHTML = xhr.responseText;
-				}
-			}
-			xhr.open( 'POST', 'api/rest/plugins/MantisParsedown', true );
-			xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
-			xhr.setRequestHeader( 'Cache-Control', 'no-cache' );
-			xhr.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
-			xhr.send( 'key=' + encodeURIComponent( element ) + '&value=' + encodeURIComponent( textarea.value ) );
+			view.html( '<i class="fa fa-spin fa-spinner fa-2x"></i>' )
+				.load( 'api/rest/plugins/MantisParsedown', { key: element, value: textarea.val() } );
 		}
 	}
 
 	function code(id) {
-		var textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
-		if( textarea.value.slice( textarea.selectionStart, textarea.selectionEnd ).indexOf( '\n' ) < 0 ) {
+		var textarea = $( '#' + id.substr( 0, id.lastIndexOf( '_' ) ) )[ 0 ] || $( '#' + id )[ 0 ];
+		if( textarea && textarea.value.slice( textarea.selectionStart, textarea.selectionEnd ).indexOf( '\n' ) < 0 ) {
 			// Single line code
 			combine( id, '`', '`' );
 		} else {
@@ -220,8 +186,21 @@
 		}
 	}
 
+	function italic(id) {
+		combine( id, '_', '_' );
+	}
+
+	function bold(id) {
+		combine( id, '**', '**' );
+	}
+
+	function head(id) {
+		combine( id, '\n### ', '\n', true );
+	}
+
 	function combine(id, before, after, multiline, sel_start, sel_length) {
-		var textarea = document.getElementById( id.substr( 0, id.lastIndexOf( '_' ) ) );
+		var textarea = $( '#' + id.substr( 0, id.lastIndexOf( '_' ) ) )[ 0 ] || $( '#' + id )[ 0 ];
+		if( !textarea ) return;
 		textarea.focus();
 		var start = textarea.selectionStart;
 		var end = textarea.selectionEnd;
@@ -234,7 +213,7 @@
 		if( !tail ) after = trimEnd( after );
 
 		var inner = '';
-		if( multiline === true ) {
+		if( multiline ) {
 			var i = 1;
 			var parts = middle.split( '\n' );
 			for( var part in parts ) {
@@ -252,11 +231,13 @@
 		}
 
 		var str = '';
-		if( head  ) str += head;
 		if( inner ) str += inner;
 		if( after ) str += after;
-		if( tail  ) str += tail;
-		textarea.value = str;
+		if ( !document.execCommand( "insertText", false, str ) ) {
+			if( head  ) str = head + str;
+			if( tail  ) str += tail;
+			textarea.value = str;
+		}
 
 		if( sel_start === undefined && sel_length === undefined ) {
 			// Keep selection
@@ -269,32 +250,48 @@
 		}
 	}
 
+	function hotkeys(event) {
+		if( event.ctrlKey ) {
+			var c = String.fromCharCode( event.which ).toUpperCase();
+			if( c == 'I' ) {
+				italic( event.target.id );	// Ctrl+I
+			} else if( c == 'B' ) {
+				bold( event.target.id );	// Ctrl+B
+			} else if( c == 'H' ) {
+				head( event.target.id );	// Ctrl+H
+			} else {
+				return;
+			}
+			event.preventDefault();
+		}
+	}
+
 	// Install snippet
 	for( var element in elements ) {
 		var id = elements[element];
-		var textarea = document.getElementById( id );
-		id += '_';
-		if( textarea && textarea.nodeName === 'TEXTAREA' ) {
+		var textarea = $( 'textarea#' + id );
+		if( textarea.length ) {
+			id += '_';
 			var view_id = id + 'view';
-			var view = document.getElementById( view_id );
-			if( !view ) {
-				view = document.createElement( 'div' );
-				view.id = view_id;
-				view.className = 'form-control pd-view';
-				textarea.insertAdjacentElement( 'afterEnd', view );
-				var btns = document.createElement( 'div' );
-				textarea.insertAdjacentElement( 'beforeBegin', btns );
+			var view = $( '#' + view_id );
+			if( !view.length ) {
+				textarea.bind( 'keydown', hotkeys );
+				view = $( '<div>', {
+					id:    view_id,
+					class: 'form-control pd-view'
+					} ).insertAfter( textarea );
+				var btns = $( '<div>' ).insertBefore( textarea );
 				for( var i in buttons ) {
-					var bt = document.createElement( 'button' );
-					bt.setAttribute( 'type', 'button' );
-					bt.id = id + i;
-					bt.className = 'pd-button fa ' + buttons[i][0];
-					bt.title = buttons[i][1];
-					bt.onclick = buttons[i][2];
-					btns.insertAdjacentElement( 'beforeEnd', bt );
+					btns.append( $( '<button>', {
+						type:  'button',
+						id:    id + i,
+						class: 'pd-button fa ' + buttons[i][0],
+						title: buttons[i][1],
+						click: buttons[i][2]
+						} ) );
 				}
 				tools( id, true );
 			}
 		}
 	}
-} )( document.getElementById( 'mantisparsedown_script' ) );
+} );

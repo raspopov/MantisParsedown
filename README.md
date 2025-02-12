@@ -12,7 +12,13 @@ Preview Mode:
 
 ## Presentation
 
-The plugin adds a button bar above each input field that supports MantisBT [Parsedown markup](https://parsedown.org/). The buttons allow you to toggle between edit and preview modes, as well as perform quick text formatting. When previewing, the user's text is sent directly to MantisBT and any installed custom markup plugins, which perform the actual text formatting. The plugin does not perform any text processing itself.
+The plugin adds a button bar above each input field that supports MantisBT [Parsedown markup](https://parsedown.org/). The buttons allow you to toggle between edit and preview modes, as well as perform quick text formatting. When previewing, the user's text is sent directly to MantisBT and any installed custom markup plugins, which perform the actual text formatting. The plugin does not perform any text processing itself. Undo (Ctrl+Z) is supported. The Ctrl+B, Ctrl+I and Ctrl+H hotkeys are used to make the entered text bold, italic and headline, respectively.
+
+## System Requirements
+
+- MantisBT 2
+- jQuery (bundled with MantisBT)
+- Font Awesome (bundled with MantisBT)
 
 ## Installation
 
