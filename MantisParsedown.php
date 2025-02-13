@@ -64,8 +64,7 @@ class MantisParsedownPlugin extends MantisPlugin {
 	public function hooks() {
 		return [
 			'EVENT_REST_API_ROUTES' => 'routes',
-			'EVENT_LAYOUT_BODY_END' => 'script',
-			'EVENT_LAYOUT_RESOURCES' => 'stylesheet',
+			'EVENT_LAYOUT_RESOURCES' => 'resources',
 		];
 	}
 
@@ -105,15 +104,8 @@ class MantisParsedownPlugin extends MantisPlugin {
 	 * A hook method to output style links.
 	 * @return void
 	 */
-	public function stylesheet() {
+	public function resources() {
 		echo "\t", '<link rel="stylesheet" href="', plugin_file( 'MantisParsedown.css' ), '">', "\n";
-	}
-
-	/**
-	 * A hook method to output script links.
-	 * @return void
-	 */
-	public function script() {
 		echo "\t", '<script ',
 			'src="', plugin_file( 'MantisParsedown.js' ), '" ',
 			'data-bugnote="', htmlspecialchars( config_get( 'bugnote_link_tag' ) ), '" ',
