@@ -122,16 +122,6 @@ $( function() {
 		]
 	];
 
-	function trimStart(str) {
-		return ( str && str.length && str[ 0 ] === '\n' ) ?
-			str.substr( 1 ) : str;
-	}
-
-	function trimEnd(str) {
-		return ( str && str.length && str[ str.length - 1 ] === '\n' ) ?
-			str.substr( 0, str.length - 1 ) : str;
-	}
-
 	function tools(id, is_edit) {
 		var element = id.substr( 0, id.lastIndexOf( '_' ) );
 		var textarea = $( '#' + element );
@@ -208,9 +198,9 @@ $( function() {
 		var middle = textarea.value.slice( start, end );
 		var tail = textarea.value.slice( end, textarea.value.length );
 
-		// Remove extra space separator
-		if( !head ) before = trimStart( before );
-		if( !tail ) after = trimEnd( after );
+		// Remove extra LF separator
+		if( !head ) before = before.replace( /^\n{1}/, '' );
+		if( !tail ) after = after.replace( /\n{1}$/, '' );
 
 		var inner = '';
 		if( multiline ) {
@@ -222,7 +212,7 @@ $( function() {
 					inner += before.replace( '%', i ) + parts[part];
 				} else {
 					// Next line
-					inner += '\n' + trimStart( before ).replace( '%', i ) + parts[part];
+					inner += '\n' + before.replace( /^\n{1}/, '' ).replace( '%', i ) + parts[part];
 				}
 				i++;
 			}
@@ -271,23 +261,28 @@ $( function() {
 		var id = elements[element];
 		var textarea = $( 'textarea#' + id );
 		if( textarea.length ) {
-			id += '_';
-			var view_id = id + 'view';
+			var view_id = id + '_view';
 			var view = $( '#' + view_id );
 			if( !view.length ) {
 				textarea.bind( 'keydown', hotkeys );
 				view = $( '<div>', {
 					id:    view_id,
-					class: 'form-control pd-view'
+					class: 'form-control pd-view',
 					} ).insertAfter( textarea );
-				var btns = $( '<div>' ).insertBefore( textarea );
+				var btns = $( '<div>', {
+					role: 'toolbar',
+					'aria-label': 'Text Formatting',
+					'aria-controls': id,
+					} ).insertBefore( textarea );
+				id += '_';
 				for( var i in buttons ) {
 					btns.append( $( '<button>', {
 						type:  'button',
 						id:    id + i,
 						class: 'pd-button fa ' + buttons[i][0],
 						title: buttons[i][1],
-						click: buttons[i][2]
+						value: buttons[i][1].split( '\n' )[ 0 ].replace( /:+$/, '' ),
+						click: buttons[i][2],
 						} ) );
 				}
 				tools( id, true );
