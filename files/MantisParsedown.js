@@ -19,6 +19,9 @@
 
 // Depends on jQuery and Font Awesome
 
+if( 'undefined' == typeof jQuery ) {
+	throw new Error( 'MantisParsedown requires jQuery' );
+}
 $( function() {
 	'use strict';
 
@@ -223,7 +226,11 @@ $( function() {
 		var str = '';
 		if( inner ) str += inner;
 		if( after ) str += after;
-		if ( !document.execCommand( "insertText", false, str ) ) {
+		try {
+			if ( !document.execCommand( "insertText", false, str ) ) {
+				throw new Error();
+			}
+		} catch(e) {
 			if( head  ) str = head + str;
 			if( tail  ) str += tail;
 			textarea.value = str;
@@ -266,23 +273,23 @@ $( function() {
 			if( !view.length ) {
 				textarea.bind( 'keydown', hotkeys );
 				view = $( '<div>', {
-					id:    view_id,
-					class: 'form-control pd-view',
+					'id':    view_id,
+					'class': 'form-control pd-view'
 					} ).insertAfter( textarea );
 				var btns = $( '<div>', {
-					role: 'toolbar',
+					'role': 'toolbar',
 					'aria-label': 'Text Formatting',
-					'aria-controls': id,
+					'aria-controls': id
 					} ).insertBefore( textarea );
 				id += '_';
 				for( var i in buttons ) {
 					btns.append( $( '<button>', {
-						type:  'button',
-						id:    id + i,
-						class: 'pd-button fa ' + buttons[i][0],
-						title: buttons[i][1],
-						value: buttons[i][1].split( '\n' )[ 0 ].replace( /:+$/, '' ),
-						click: buttons[i][2],
+						'type':  'button',
+						'id':    id + i,
+						'class': 'pd-button fa ' + buttons[i][0],
+						'title': buttons[i][1],
+						'value': buttons[i][1].split( '\n' )[ 0 ].replace( /:+$/, '' ),
+						'click': buttons[i][2]
 						} ) );
 				}
 				tools( id, true );
