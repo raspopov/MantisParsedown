@@ -26,10 +26,10 @@ $( function() {
 	'use strict';
 
 	var script = $( '#mantisparsedown_script' );
-	var bugnote = script.attr( 'data-bugnote' );
-	var bug = script.attr( 'data-bug' );
-	var mentions = script.attr( 'data-mentions' );
-	var elements = script.attr( 'data-elements' ).split( ',' );
+	var bugnote = script.data( 'bugnote' );
+	var bug = script.data( 'bug' );
+	var mentions = script.data( 'mentions' );
+	var elements = script.data( 'elements' ).split( ',' );
 
 	var buttons = [
 		[
