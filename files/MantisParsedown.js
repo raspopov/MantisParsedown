@@ -203,7 +203,7 @@ $( function() {
 
 		// Remove extra LF separator
 		if( !head ) before = before.replace( /^\n{1}/, '' );
-		if( !tail ) after = after.replace( /\n{1}$/, '' );
+		if( !tail && after ) after = after.replace( /\n{1}$/, '' );
 
 		var inner = '';
 		if( multiline ) {
