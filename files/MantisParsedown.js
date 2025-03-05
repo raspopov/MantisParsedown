@@ -35,93 +35,111 @@ $( function() {
 		[
 			'fa-edit',
 			'Edit',
-			function() { tools( this.id, true ); }
+			function() { tools( this.id, true ); },
+			true
 		],
 		[
 			'fa-eye',
 			'Preview',
-			function() { tools( this.id, false ); }
+			function() { tools( this.id, false ); },
+			true
 		],
 		// In reverse order due "float" style
 		[
 			'fa-comment',
 			( 'Note link:\n%1note-number' ).replace( '%1', bugnote ),
-			function() { combine( this.id, bugnote ); }
+			function() { combine( this.id, bugnote ); },
+			true
 		],
 		[
 			'fa-list-alt',
 			( 'Issue link:\n%1issue-number' ).replace( '%1', bug ),
-			function() { combine( this.id, bug ); }
+			function() { combine( this.id, bug ); },
+			true
 		],
 		[
 			'fa-user',
 			( 'Mention link:\n%1username' ).replace( '%1', mentions ),
-			function() { combine( this.id, mentions ); }
+			function() { combine( this.id, mentions ); },
+			true
 		],
 		[
 			'fa-table',
 			'Table:\n|header|\n|-|\n|data|',
-			function() { combine( this.id, '\n\n|', '|\n|-|\n|data|\n\n', false, 7, 4 ); }
+			function() { combine( this.id, '\n\n|', '|\n|-|\n|data|\n\n', false, 7, 4 ); },
+			false
 		],
 		[
 			'fa-minus',
 			'Separator:\n___',
-			function() { combine( this.id, '\n___\n' ); }
+			function() { combine( this.id, '\n___\n' ); },
+			false
 		],
 		[
 			'fa-list-ol',
 			'Ordered list:\n1. text',
-			function() { combine( this.id, '\n%. ', '\n', true ); } // '%' replaced by line number
+			function() { combine( this.id, '\n%. ', '\n', true ); }, // '%' replaced by line number
+			false
 		],
 		[
 			'fa-list-ul',
 			'Unordered list:\n- text',
-			function() { combine( this.id, '\n- ', '\n', true ); }
+			function() { combine( this.id, '\n- ', '\n', true ); },
+			false
 		],
 		[
 			'fa-picture-o',
 			'Image:\n![text](url "title")',
-			function() { combine( this.id, '![', '](url)', false, 2, 3 ); }
+			function() { combine( this.id, '![', '](url)', false, 2, 3 ); },
+			true
 		],
 		[
 			'fa-link',
 			'Link:\n[text](url "title")',
-			function() { combine( this.id, '[', '](url)', false, 2, 3 ); }
+			function() { combine( this.id, '[', '](url)', false, 2, 3 ); },
+			true
 		],
 		[
 			'fa-code',
 			'Code:\n`text` or ```multi-line text```',
-			function() { code( this.id ); }
+			function() { code( this.id ); },
+			true
 		],
 		[
 			'fa-quote-left',
 			'Quote:\n> text',
-			function() { combine( this.id, '\n> ', '\n\n' ); }
+			function() { combine( this.id, '\n> ', '\n\n' ); },
+			false
 		],
 		[
 			'fa-underline',
 			'Underline:\n<u>text</u>',
-			function() { combine( this.id, '<u>', '</u>' ); }
+			function() { combine( this.id, '<u>', '</u>' ); },
+			true
 		],
 		[
 			'fa-strikethrough',
 			'Strikethrough:\n~~text~~',
-			function() { combine( this.id, '~~', '~~' ); }
+			function() { combine( this.id, '~~', '~~' ); },
+			true
 		],
 		[
 			'fa-italic',
 			'Italics (Ctrl+I):\n_text_',
-			function() { italic( this.id ); }
+			function() { italic( this.id ); },
+			true
 		],
 		[
 			'fa-bold',
 			'Bold (Ctrl+B):\n**text**',
-			function() { bold( this.id ); }
+			function() { bold( this.id ); },
+			true
 		],
 		[
 			'fa-header',
 			'Heading (Ctrl+H):\n# h1, ## h2 ... ###### h6',
-			function() { head( this.id ); }
+			function() { head( this.id ); },
+			false
 		]
 	];
 
@@ -266,7 +284,12 @@ $( function() {
 	// Install snippet
 	for( var element in elements ) {
 		var id = elements[element];
+		var is_input = false;
 		var textarea = $( 'textarea#' + id );
+		if( !textarea.length ) {
+			is_input = true;
+			textarea = $( 'input[type="text"]#' + id );
+		}
 		if( textarea.length ) {
 			var view_id = id + '_view';
 			var view = $( '#' + view_id );
@@ -283,14 +306,16 @@ $( function() {
 					} ).insertBefore( textarea );
 				id += '_';
 				for( var i in buttons ) {
-					btns.append( $( '<button>', {
-						'type':  'button',
-						'id':    id + i,
-						'class': 'pd-button fa ' + buttons[i][0],
-						'title': buttons[i][1],
-						'value': buttons[i][1].split( '\n' )[ 0 ].replace( /:+$/, '' ),
-						'click': buttons[i][2]
-						} ) );
+					if( !is_input || buttons[i][3] ) {
+						btns.append( $( '<button>', {
+							'type':  'button',
+							'id':    id + i,
+							'class': 'pd-button fa ' + buttons[i][0],
+							'title': buttons[i][1],
+							'value': buttons[i][1].split( '\n' )[ 0 ].replace( /:+$/, '' ),
+							'click': buttons[i][2]
+							} ) );
+					}
 				}
 				tools( id, true );
 			}

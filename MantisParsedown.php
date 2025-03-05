@@ -53,6 +53,7 @@ class MantisParsedownPlugin extends MantisPlugin {
 				'bugnote_text',
 				'project-description',
 				'news-update-body',
+				'summary',
 			],
 		];
 	}
