@@ -54,6 +54,9 @@ class MantisParsedownPlugin extends MantisPlugin {
 				'project-description',
 				'news-update-body',
 				'summary',
+				'news-headline',
+				'news-update-headline',
+				'news-body',
 			],
 		];
 	}
