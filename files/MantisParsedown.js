@@ -33,7 +33,7 @@ $( function() {
 
 	var buttons = [
 		[
-			'fa-edit',
+			'fa-edit pd-active',
 			'Edit',
 			function() { tools( this.id, true ); },
 			true
@@ -46,97 +46,97 @@ $( function() {
 		],
 		// In reverse order due "float" style
 		[
-			'fa-comment',
+			'fa-comment pd-right',
 			( 'Note link:\n%1note-number' ).replace( '%1', bugnote ),
 			function() { combine( this.id, bugnote ); },
 			true
 		],
 		[
-			'fa-list-alt',
+			'fa-list-alt pd-right',
 			( 'Issue link:\n%1issue-number' ).replace( '%1', bug ),
 			function() { combine( this.id, bug ); },
 			true
 		],
 		[
-			'fa-user',
+			'fa-user pd-right',
 			( 'Mention link:\n%1username' ).replace( '%1', mentions ),
 			function() { combine( this.id, mentions ); },
 			true
 		],
 		[
-			'fa-table',
+			'fa-table pd-right',
 			'Table:\n|header|\n|-|\n|data|',
 			function() { combine( this.id, '\n\n|', '|\n|-|\n|data|\n\n', false, 7, 4 ); },
 			false
 		],
 		[
-			'fa-minus',
+			'fa-minus pd-right',
 			'Separator:\n___',
 			function() { combine( this.id, '\n___\n' ); },
 			false
 		],
 		[
-			'fa-list-ol',
+			'fa-list-ol pd-right',
 			'Ordered list:\n1. text',
 			function() { combine( this.id, '\n%. ', '\n', true ); }, // '%' replaced by line number
 			false
 		],
 		[
-			'fa-list-ul',
+			'fa-list-ul pd-right',
 			'Unordered list:\n- text',
 			function() { combine( this.id, '\n- ', '\n', true ); },
 			false
 		],
 		[
-			'fa-picture-o',
+			'fa-picture-o pd-right',
 			'Image:\n![text](url "title")',
 			function() { combine( this.id, '![', '](url)', false, 2, 3 ); },
 			true
 		],
 		[
-			'fa-link',
+			'fa-link pd-right',
 			'Link:\n[text](url "title")',
 			function() { combine( this.id, '[', '](url)', false, 2, 3 ); },
 			true
 		],
 		[
-			'fa-code',
+			'fa-code pd-right',
 			'Code:\n`text` or ```multi-line text```',
 			function() { code( this.id ); },
 			true
 		],
 		[
-			'fa-quote-left',
+			'fa-quote-left pd-right',
 			'Quote:\n> text',
 			function() { combine( this.id, '\n> ', '\n\n' ); },
 			false
 		],
 		[
-			'fa-underline',
+			'fa-underline pd-right',
 			'Underline:\n<u>text</u>',
 			function() { combine( this.id, '<u>', '</u>' ); },
 			true
 		],
 		[
-			'fa-strikethrough',
+			'fa-strikethrough pd-right',
 			'Strikethrough:\n~~text~~',
 			function() { combine( this.id, '~~', '~~' ); },
 			true
 		],
 		[
-			'fa-italic',
+			'fa-italic pd-right',
 			'Italics (Ctrl+I):\n_text_',
 			function() { italic( this.id ); },
 			true
 		],
 		[
-			'fa-bold',
+			'fa-bold pd-right',
 			'Bold (Ctrl+B):\n**text**',
 			function() { bold( this.id ); },
 			true
 		],
 		[
-			'fa-header',
+			'fa-header pd-right',
 			'Heading (Ctrl+H):\n# h1, ## h2 ... ###### h6',
 			function() { head( this.id ); },
 			false
@@ -173,7 +173,7 @@ $( function() {
 		for( var i = 2; i < buttons.length; i++ ) {
 			var btn_tool = $( '#' + element + '_' + i );
 			if( is_edit ) {
-				btn_tool.addClass( 'pd-right' ).removeClass( 'pd-hide' );
+				btn_tool.removeClass( 'pd-hide' );
 			} else {
 				btn_tool.addClass( 'pd-hide' );
 			}
@@ -297,7 +297,7 @@ $( function() {
 				textarea.bind( 'keydown', hotkeys );
 				view = $( '<div>', {
 					'id':    view_id,
-					'class': 'form-control pd-view'
+					'class': 'form-control pd-view pd-hide'
 					} ).insertAfter( textarea );
 				var btns = $( '<div>', {
 					'role': 'toolbar',
@@ -317,7 +317,6 @@ $( function() {
 							} ) );
 					}
 				}
-				tools( id, true );
 			}
 		}
 	}
