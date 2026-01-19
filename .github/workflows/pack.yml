@@ -1,0 +1,31 @@
+name: Pack
+
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pack
+        run: |
+          mkdir -p pack/MantisParsedown/
+          cp MantisParsedown.php pack/MantisParsedown/
+          cp -r files pack/MantisParsedown/
+          cp -r lang pack/MantisParsedown/
+          cp -r pages pack/MantisParsedown/
+          cd pack/
+          zip -r ../MantisParsedown.zip .
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          draft: true
+          files: MantisParsedown.zip
+          tag_name: ${{ github.ref_name }}
