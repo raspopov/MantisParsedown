@@ -1,0 +1,7 @@
+<?php
+
+$s_plugin_MantisParsedown_title = 'Mantis Parsedown';
+$s_plugin_MantisParsedown_description = 'Плагин для предварительного просмотра встроенной разметки полей ввода.';
+$s_plugin_MantisParsedown_elements_title = 'Элементы интерфейса';
+$s_plugin_MantisParsedown_elements_details = 'Идентификаторы элементов <textarea> и <input> для добавления панели инструментов плагина. Очистите это поле для сброса по умолчанию.';
+$s_plugin_MantisParsedown_markdown_warning = 'Опция "Обработка Markdown" плагина "Форматирование MantisBT" в настоящее время отключена, поэтому подсветка синтаксиса также отключена, если не установлены другие плагины форматирования.';

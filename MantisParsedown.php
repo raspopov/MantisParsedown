@@ -22,13 +22,15 @@ class MantisParsedownPlugin extends MantisPlugin {
 
 	/**
 	 * A method that populates the plugin information and minimum requirements.
+	 *
 	 * @return void
 	 */
 	public function register() {
 		$this->name = plugin_lang_get( 'title' );
 		$this->description = plugin_lang_get( 'description' );
+		$this->page = 'MantisParsedownConfig';
 
-		$this->version = '1.0.0';
+		$this->version = '1.1.0';
 		$this->requires = [
 			'MantisCore' => '2.0'
 		];
@@ -40,6 +42,7 @@ class MantisParsedownPlugin extends MantisPlugin {
 
 	/**
 	 * Default plugin configuration
+	 *
 	 * @return array
 	 */
 	function config() {
@@ -63,6 +66,7 @@ class MantisParsedownPlugin extends MantisPlugin {
 
 	/**
 	 * Register event hooks for plugin.
+	 *
 	 * @return array
 	 */
 	public function hooks() {
@@ -106,16 +110,17 @@ class MantisParsedownPlugin extends MantisPlugin {
 
 	/**
 	 * A hook method to output style links.
+	 *
 	 * @return void
 	 */
 	public function resources() {
 		echo "\t", '<link rel="stylesheet" href="', plugin_file( 'MantisParsedown.css' ), '">', "\n";
 		echo "\t", '<script ',
 			'src="', plugin_file( 'MantisParsedown.js' ), '" ',
-			'data-bugnote="', htmlspecialchars( config_get( 'bugnote_link_tag' ) ), '" ',
-			'data-bug="', htmlspecialchars( config_get( 'bug_link_tag' ) ), '" ',
-			'data-mentions="', htmlspecialchars( config_get( 'mentions_tag' ) ), '" ',
-			'data-elements="', implode( ',', plugin_config_get( 'elements' ) ), '" ',
+			'data-bugnote="', string_html_specialchars( config_get( 'bugnote_link_tag' ) ), '" ',
+			'data-bug="', string_html_specialchars( config_get( 'bug_link_tag' ) ), '" ',
+			'data-mentions="', string_html_specialchars( config_get( 'mentions_tag' ) ), '" ',
+			'data-elements="', string_html_specialchars( implode( ',', plugin_config_get( 'elements' ) ) ), '" ',
 			'id="mantisparsedown_script" async></script>', "\n";
 	}
 }

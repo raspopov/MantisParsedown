@@ -2,6 +2,9 @@
 
 **MantisParsedown** - A MantisBT plugin for a native markup preview of the input fields.
 
+> [!IMPORTANT]
+> This plugin does not perform any text processing! Text formatting is handled entirely by other specialized MantisBT plugins, such as the built-in "MantisBT Formatting" plugin.
+
 Edit Mode:
 
 ![Mantis Parsedown Edit Screenshot](https://raw.githubusercontent.com/raspopov/MantisParsedown/master/MantisParsedown.png)
@@ -12,13 +15,14 @@ Preview Mode:
 
 ## Presentation
 
-The plugin adds a button bar above each input field that supports MantisBT [Parsedown markup](https://parsedown.org/). The buttons allow you to toggle between edit and preview modes, as well as perform quick text formatting. When previewing, the user's text is sent directly to MantisBT and any installed custom markup plugins, which perform the actual text formatting. The plugin does not perform any text processing itself. Undo (Ctrl+Z) is supported. The Ctrl+B, Ctrl+I and Ctrl+H hotkeys are used to make the entered text bold, italic and headline, respectively.
+The plugin adds a button bar above each input field that supports MantisBT [Parsedown markup](https://parsedown.org/). The buttons allow you to toggle between edit and preview modes, as well as perform quick text formatting. When previewing, the user's text is sent directly to MantisBT and any installed custom markup plugins, which perform the actual text formatting. Undo (Ctrl+Z) is supported. The Ctrl+B, Ctrl+I and Ctrl+H hotkeys are used to make the entered text bold, italic and headline, respectively.
 
 ## System Requirements
 
-- MantisBT 2
-- jQuery (bundled with MantisBT)
-- Font Awesome (bundled with MantisBT)
+- MantisBT 2.
+- jQuery (bundled with MantisBT).
+- Font Awesome (bundled with MantisBT).
+- One of the plugins for text markup, for example, "MantisBT Formatting" (bundled with MantisBT).
 
 ## Installation
 
@@ -29,7 +33,7 @@ The plugin adds a button bar above each input field that supports MantisBT [Pars
 
 ## Configuration
 
-- None
+- If you are using the "MantisBT Formatting" plugin, don't forget to enable the "Markdown Processing" option in its settings.
 
 ## Similar plugins
 

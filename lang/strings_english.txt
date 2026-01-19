@@ -2,3 +2,6 @@
 
 $s_plugin_MantisParsedown_title = 'Mantis Parsedown';
 $s_plugin_MantisParsedown_description = 'A plugin for a native markup preview of the input fields.';
+$s_plugin_MantisParsedown_elements_title = 'Interface Elements';
+$s_plugin_MantisParsedown_elements_details = 'IDs for the <textarea> and <input> interface elements for adding the plugin toolbar. Clear this field to reset to the default settings.';
+$s_plugin_MantisParsedown_markdown_warning = 'The "Markdown Processing" feature of the "MantisBT Formatting" plugin is currently disabled, so syntax highlighting is also disabled unless other formatting plugins are installed.';
